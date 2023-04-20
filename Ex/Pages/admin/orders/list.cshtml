@@ -1,0 +1,54 @@
+﻿@page
+@model Ex.Pages.admin.orders.listModel
+@{
+
+	var dateFrom = Model.dateFrom;
+	var dateTo = Model.dateTo;
+
+}
+<div class="path-admin">ORDERS LIST</div>
+<div class="content-main">
+	<div id="content-main-dashboard">
+		<div id="order-title" style="display: flex;">
+			<div>
+				<b>Filter by Order date:</b>
+				<form method="get">
+					From: <input asp-for="dateFrom" type="date" id="dateFrom" onchange="dateChange()" />
+					To: <input asp-for="dateTo" type="date" id="dateTo" onchange="dateChange()" />
+					<div class="msg-error">@ViewData["msg"]</div>
+					<input type="submit" value="Filter">
+				</form>
+			</div>
+
+		</div>
+
+		<div id="order-table">
+			@if (Model.orderList == null || Model.orderList.Count < 1)
+			{
+				<div style="margin: 1% 2%;" class="msg-error">Not found order(s)!</div>
+			}
+			else
+			{
+				<table id="orders">
+					<tr>
+						<th style="padding-left: 30px;">OrderID</th>
+						<th style="padding-left: 30px;">OrderDate</th>
+						<th style="padding-left: 30px;">RequiredDate</th>
+						<th style="padding-left: 30px;">ShippedDate</th>
+						<th style="padding-left: 30px;">Freight($)</th>
+					</tr>
+					@foreach (var o in Model.orderList)
+					{
+						<tr>
+							<td style="padding-left: 30px;"><a href="~/Admin/Order/OrderDetails?id=@o.OrderId">@o.OrderId</a></td>
+							<td style="padding-left: 30px;">@o.OrderDate.Value.ToString("dd-MM-yyyy")</td>
+							<td style="padding-left: 30px;">@(@o.RequiredDate == null ? "" : @o.RequiredDate.Value.ToString("dd-MM-yyyy"))</td>
+							<td style="padding-left: 30px;">@(@o.ShippedDate == null ? "" : @o.ShippedDate.Value.ToString("dd-MM-yyyy"))</td>
+							<td style="padding-left: 30px;">@o.Freight</td>
+						</tr>
+					}
+				</table>
+			}
+		</div>
+	</div>
+</div>
