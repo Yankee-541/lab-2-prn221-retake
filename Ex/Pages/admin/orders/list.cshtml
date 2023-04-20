@@ -8,28 +8,40 @@
 }
 <div class="path-admin">ORDERS LIST</div>
 <div class="content-main">
-	<div id="content-main-dashboard">
-		<div id="order-title" style="display: flex;">
-			<div>
-				<b>Filter by Order date:</b>
-				<form method="get">
-					From: <input asp-for="dateFrom" type="date" id="dateFrom" onchange="dateChange()" />
-					To: <input asp-for="dateTo" type="date" id="dateTo" onchange="dateChange()" />
-					<div class="msg-error">@ViewData["msg"]</div>
-					<input type="submit" value="Filter">
-				</form>
-			</div>
+	<div id="order-title" style="display: flex;">
+		<div>
+			
+			<form method="get">
+				From: <input asp-for="dateFrom" type="date" id="dateFrom" onchange="dateChange()" />
+				To: <input asp-for="dateTo" type="date" id="dateTo" onchange="dateChange()" />
 
+				<input type="submit" value="Filter">
+			</form>
 		</div>
 
-		<div id="order-table">
+	</div>
+	<div class="row">
+
+		<div class="col-md-3">
+			<h3>Customers</h3>
+			<ul>
+				@foreach (var item in Model.Customers)
+				{
+					<a asp-route-id="@item.CustomerId">
+					<li>@item.CompanyName</li>
+					</a>
+				}
+				
+			</ul>
+		</div>
+		<div class="col-md-9">
 			@if (Model.orderList == null || Model.orderList.Count < 1)
 			{
 				<div style="margin: 1% 2%;" class="msg-error">Not found order(s)!</div>
 			}
 			else
 			{
-				<table id="orders">
+				<table id="orders" class="table">
 					<tr>
 						<th style="padding-left: 30px;">OrderID</th>
 						<th style="padding-left: 30px;">OrderDate</th>
@@ -40,7 +52,7 @@
 					@foreach (var o in Model.orderList)
 					{
 						<tr>
-							<td style="padding-left: 30px;"><a href="~/Admin/Order/OrderDetails?id=@o.OrderId">@o.OrderId</a></td>
+							<td style="padding-left: 30px;"><a href="~/admin/orders/details?id=@o.OrderId">@o.OrderId</a></td>
 							<td style="padding-left: 30px;">@o.OrderDate.Value.ToString("dd-MM-yyyy")</td>
 							<td style="padding-left: 30px;">@(@o.RequiredDate == null ? "" : @o.RequiredDate.Value.ToString("dd-MM-yyyy"))</td>
 							<td style="padding-left: 30px;">@(@o.ShippedDate == null ? "" : @o.ShippedDate.Value.ToString("dd-MM-yyyy"))</td>

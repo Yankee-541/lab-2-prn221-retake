@@ -2,6 +2,8 @@ using Ex.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Drawing.Printing;
 
 namespace Ex.Pages.admin.orders
 {
@@ -12,33 +14,40 @@ namespace Ex.Pages.admin.orders
 		{
 			_context = context;
 		}
-
-		public IList<Order> Order { get; set; } = default!;
 		public List<Order> orderList { get; set; }
 
-
+		[BindProperty]
+		public List<Customer> Customers { get; set; }
 		[BindProperty(SupportsGet = true)]
 		public DateTime? dateFrom { get; set; }
 		[BindProperty(SupportsGet = true)]
 		public DateTime? dateTo { get; set; }
 
-		public async Task<IActionResult> OnGet()
-		{
+		[FromQuery(Name = "id")]
+		public string CusId { get; set; }
 
-			orderList = getAllOrders();
-			return Page();
+		public void OnGet()
+		{
+			Customers = _context.Customers.ToList();
+
+			if (dateFrom == null || dateTo == null 
+				|| (dateFrom == null && dateTo == null))
+			{
+				orderList = _context.Orders.ToList();
+			}
+			else
+			{
+				orderList = _context.Orders.Where(o => DateTime.Compare(o.OrderDate.Value, dateFrom.Value) >= 0
+					&& DateTime.Compare(o.OrderDate.Value, dateTo.Value) <= 0).ToList();
+			}
+
+
+			if (CusId != null)
+			{
+				orderList = orderList.Where(o => o.CustomerId.Equals(CusId)).ToList();
+			}
+
 		}
 
-		private List<Order> getAllOrders()
-		{
-			var list = from order in _context.Orders
-					   .Include(e => e.Employee)
-					   .Include(c => c.Customer)
-					   orderby order.OrderDate ascending
-					   select order;
-			List<Models.Order> orders = list.ToList();
-
-			return orders;
-		}
 	}
 }

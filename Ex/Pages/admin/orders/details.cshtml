@@ -1,0 +1,35 @@
+﻿@page "{id:int?}"
+@model Ex.Pages.admin.orders.detailsModel
+@{
+}
+<div id="content-detail">
+
+    <div id="product">
+        <div id="product-name">
+            <table class="table">
+                <tr>
+                    <th>ProductId</th>
+                    <th>ProductName</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Amount</th>
+                </tr>
+                @if (Model.orderDetails != null && Model.orderDetails.Count > 0)
+                {
+                    foreach (var p in Model.orderDetails)
+                    {
+                        <tr>
+                            <td>@p.ProductId</td>
+                            <td>@p.Product.ProductName</td>
+                            <td>@p.UnitPrice$</td>
+                            <td>@p.Quantity</td>
+                            <td>@(p.Quantity * p.UnitPrice)</td>
+                        </tr>
+                    }
+                }
+            </table>
+            <div>Total = @Model.Sum</div>
+        </div>
+    </div>
+
+</div>
